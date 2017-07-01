@@ -164,6 +164,9 @@ def message_replier(messages):
       redisserver.sadd('zigzag:members', userid)
       userinfo = str(message.from_user)
       redisserver.hset('zigzag:userdata', userid, userinfo)
+    if message.text == "/cancel" or message.text == "/start":
+      start(message)
+      return
     # Check if is the message in in_step_handler?
     if str(message.from_user.id) in instephandler:
 #      exec("p = multiprocessing.Process(target=" + str(plugin) + "(message))")
