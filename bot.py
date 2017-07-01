@@ -56,17 +56,17 @@ class Zig:
         print(textcolor.RESET + "[" + pluginname + "] " + self.string + textcolor.RESET)
         return True
     def nextstep(self, message, function):
-        self.message = message
-        self.function = function
-        stack = inspect.stack()
-        pluginname = stack[1][0].f_code.co_name
         try:
+          self.message = message
+          self.function = function
+          stack = inspect.stack()
+          pluginname = stack[1][0].f_code.co_name
           uid = eval(str(message))['chat']['id']
+          instephandler[str(uid)] = pluginname
+          bot.register_next_step_handler(message, function)
+          return True
         except:
-          pass
-        instephandler[str(uid)] = pluginname
-        bot.register_next_step_handler(message, function)
-        return True
+          return False
     def ban(self, userid):
         self.userid = userid
         redisserver.sadd('zigzag:banlist', int(self.userid))

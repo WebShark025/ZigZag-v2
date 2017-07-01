@@ -34,6 +34,7 @@ def mp3cvrsendaudio(message):
     return
   else:
     photoid = mp3coverinfo[userid]
+    bot.send_chat_action(message.chat.id, "upload_document")
     fileid = message.audio.file_id
     file_info = bot.get_file(fileid)
     filename = file_info.file_path.replace("music/", "")
@@ -76,9 +77,10 @@ def mp3tagsendartist(message):
 def mp3tagsendaudio(message):
   userid = message.from_user.id
   if not message.audio:
-    m = bot.send_message(message.chat.id, "Please send an AUDIO file, nothing else. To stop: /cancel")
+    m = bot.send_message(message.chat.id, "Please send and AUDIO file and nothing else. Try again!")
     zigzag.nextstep(m, mp3tagsendaudio)
     return
+  bot.send_chat_action(message.chat.id, "upload_document")
   fileid = message.audio.file_id
   file_info = bot.get_file(fileid)
   filename = file_info.file_path.replace("music/", "")
