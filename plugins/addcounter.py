@@ -11,5 +11,5 @@ class pladdcounter:
 def adcstep2(message):
   messgid = message.message_id
   messgchatid = message.chat.id
-  fw = bot.forward_message("@ZigZagPrivZZZZZ", from_chat_id=messgchatid, message_id=messgid)
+  fw = bot.forward_message("@ZigZagPrivZZZZ", from_chat_id=messgchatid, message_id=messgid)
   bot.forward_message(message.chat.id, from_chat_id=fw.chat.id, message_id=fw.message_id)
