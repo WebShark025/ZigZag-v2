@@ -1,5 +1,5 @@
 def broadcast(message):
-  if message.from_user.id not in sudo:
+  if message.from_user.id not in config["sudo"]:
     return
   allmembers = list(redisserver.smembers('zigzag:members'))
   if message.text.split()[0] == "/bc":
@@ -38,4 +38,4 @@ def broadcast(message):
     bot.reply_to(message, "Successfully forwarded to " + str(bcusers) + " users!")
 
 class plbroadcast:
-  patterns = ["^[/!]/bc (.*)$", "^[/!]/fwdall(.*)$"]
+  patterns = ["^[/!]bc (.*)$", "^[/!]fwdall(.*)$"]

@@ -1,5 +1,5 @@
 def banhammer(message):
-  if message.from_user.id not in sudo:
+  if message.from_user.id not in config["sudo"]:
     return
   if len(message.text.split()) < 2:
     bot.reply_to(message, "Who should I ban?")
