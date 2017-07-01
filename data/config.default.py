@@ -9,4 +9,6 @@ enabled_plugins = [
 "addcounter",
 "broadcast",
 "banhammer",
+"calculator",
+"mp3tag"
 ]

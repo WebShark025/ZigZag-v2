@@ -21,14 +21,19 @@ def mp3tagsendartist(message):
   zigzag.nextstep(m, mp3tagsendaudio)
 
 def mp3tagsendaudio(message):
+  userid = message.from_user.id
   if not message.audio:
     m = bot.send_message(message.chat.id, "Please send an AUDIO file, nothing else. To stop: /cancel")
     zigzag.nextstep(m, mp3tagsendaudio)
     return
   fileid = message.audio.file_id
-  fileinfo = bot.get_file(fileid)
-  filename = fileinfo.filepath.replace("music/", "")
+  file_info = bot.get_file(fileid)
+  filename = file_info.file_path.replace("music/", "")
   file = urllib.urlretrieve('https://api.telegram.org/file/bot{0}/{1}'.format(config['token'], file_info.file_path), 'data/mp3tag/{}'.format(filename))
-  bot.send_audio(message.chat.id, open('data/mp3tag/{}'.format(filename), 'rb'), duration=message.audio.duration, performer=mp3taginfo[userid][artist], title=mp3taginfo[userid][title])
+  bot.send_audio(message.chat.id, open('data/mp3tag/{}'.format(filename), 'rb'), duration=message.audio.duration, performer=mp3taginfo[userid]["artist"], title=mp3taginfo[userid]["title"])
   del mp3taginfo[userid]
-  os.remove(filename)
+  os.remove("data/mp3tag/" + filename)
+
+
+class plmp3tag:
+  patterns = ["^[/!]mp3tag(.*)$"]

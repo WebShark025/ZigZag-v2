@@ -12,6 +12,7 @@
 # Imports
 import multiprocessing
 import datetime
+import urllib
 import os
 import telebot
 import re
@@ -59,7 +60,10 @@ class Zig:
         self.function = function
         stack = inspect.stack()
         pluginname = stack[1][0].f_code.co_name
-        uid = eval(str(message))['chat']['id']
+        try:
+          uid = eval(str(message))['chat']['id']
+        except:
+          pass
         instephandler[str(uid)] = pluginname
         bot.register_next_step_handler(message, function)
         return True
