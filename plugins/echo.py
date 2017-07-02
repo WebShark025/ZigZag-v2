@@ -56,7 +56,10 @@ def inlineecho(inlinequery):
 # It should be as this format:
 # class pl<pluginname> . so in the 'echo' plugin, it is class plecho:
 class plecho:
+  # REQUIRED FIELD: *patterns* : The text patterns that you need to be passed to the plugin. Use RegEX!
   patterns = ["^[!/]echo (.*)$"]
+  # OPTIONAL FIELD: *callbacks* : The callback-data patterns that you need to be passed to the plugin.
   callbacks = ["^help (.*)$", "^help"]
+  # OPTIONAL FIELD: *inlines* : The inline-query patterns that you need to be passed to the plugin
+  # You can use the "DEFAULTQUERY" pattern in the inlines variable, so when there is no query, it will be passed to this plugin.
   inlines = ["hel", "DEFAULTQUERY"]
-  # At the 'inlines' variable, you can use DEFAULTQUERY to get when there is no queries entered
