@@ -62,10 +62,11 @@ class Zig:
           stack = inspect.stack()
           pluginname = stack[1][0].f_code.co_name
           uid = eval(str(message))['chat']['id']
-          instephandler[str(uid)] = pluginname
-          bot.register_next_step_handler(message, function)
+          instephandler[str(uid)] = [pluginname, function]
+          bot.register_next_step_handler(message, nextstephandler)
           return True
-        except:
+        except Exception as e:
+          print(e)
           return False
     def ban(self, userid):
         self.userid = userid
@@ -90,8 +91,6 @@ class Zig:
 
 
 zigzag = Zig()
-# test purpose:
-#zigzag.error("Hi")
 
 # Print greeting
 print(textcolor.OKBLUE + "#########################################")
@@ -152,6 +151,18 @@ for plugin in enabled_plugins:
 time = datetime.datetime.now()
 print(textcolor.OKGREEN + "Bot launched successfully. Launch time: " + str(time) + textcolor.RESET)
 
+# Define Next Step Handler function
+def nextstephandler(message):
+  try:
+    print(instephandler)
+    pluginname = instephandler[str(message.from_user.id)][0]
+    funcname = instephandler[str(message.from_user.id)][1]
+    exec("p = multiprocessing.Process(target=" + str(funcname) + "(message))")
+    p.start()
+    del instephandler[str(message.from_user.id)]
+  except Exception as e:
+    zigzag.error("Error registering next step: " + str(e))
+
 # Define message handler function.
 def message_replier(messages):
   for message in messages:
@@ -169,10 +180,6 @@ def message_replier(messages):
       return
     # Check if is the message in in_step_handler?
     if str(message.from_user.id) in instephandler:
-#      exec("p = multiprocessing.Process(target=" + str(plugin) + "(message))")
-#      p.start()
-      # Whats going on onthe top line?:| IDK
-      del instephandler[str(message.from_user.id)]
       return
     else:
       # Else, Try to find a regex match in all plugins.
@@ -196,7 +203,10 @@ bot.set_update_listener(message_replier)
 def callback_inline(call):
   if call.message:
     for plugin in pllist:
-      exec("pln = pl" + plugin + ".callbacks")
+      try:
+        exec("pln = pl" + plugin + ".callbacks")
+      except:
+        continue
       try:
         for rgx in pln:
           rlnumber = re.compile(rgx)
@@ -211,7 +221,10 @@ def callback_inline(call):
 @bot.inline_handler(func=lambda query: True)
 def inline_hand(inlinequery):
   for plugin in pllist:
-    exec("pln = pl" + plugin + ".inlines")
+    try:
+      exec("pln = pl" + plugin + ".inlines")
+    except:
+      continue
     try:
       for rgx in pln:
         rlnumber = re.compile(rgx)

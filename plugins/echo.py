@@ -4,10 +4,11 @@ def echo(message):
   markup.add(markupif)
   zigzag.info("Recieved a command!")
   bot.reply_to(message, message.text, reply_markup=markup)
-#  m = bot.send_message(message.from_user.id, "Registered", parse_mode="Markdown")
+  m = bot.send_message(message.from_user.id, "Registered", parse_mode="Markdown")
 #  uid = eval(str(m))['chat']['id']
 #  print(uid)
-#  zigzag.nextstep(m, next)
+  # FUNCTION NAME SHOULD BE IN STRING FORMAT!
+  zigzag.nextstep(m, "next")
 #  print(message.from_user)
 #  zigzag.unban(message.from_user.id)
 #  print zigzag.getuser(message.from_user.id)['first_name']
