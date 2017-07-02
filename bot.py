@@ -170,7 +170,9 @@ def message_replier(messages):
     if banlist:
       return
     allmembers = list(redisserver.smembers('zigzag:members'))
-    if userid not in allmembers:
+    if str(userid) not in allmembers:
+      if "group" in message.chat.type:
+        return
       redisserver.sadd('zigzag:members', userid)
       userinfo = str(message.from_user)
       redisserver.hset('zigzag:userdata', userid, userinfo)
@@ -180,7 +182,7 @@ def message_replier(messages):
     # Check if is the message in in_step_handler?
     if str(message.from_user.id) in instephandler:
       return
-    else:
+    elif message.text:
       # Else, Try to find a regex match in all plugins.
       for plugin in pllist:
         exec("pln = pl" + plugin + ".patterns")
