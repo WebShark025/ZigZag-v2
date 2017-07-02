@@ -12,4 +12,5 @@ enabled_plugins = [
 "calculator",
 "exchange",
 "mp3tag",
+"id",
 ]
