@@ -154,7 +154,6 @@ print(textcolor.OKGREEN + "Bot launched successfully. Launch time: " + str(time)
 # Define Next Step Handler function
 def nextstephandler(message):
   try:
-    print(instephandler)
     pluginname = instephandler[str(message.from_user.id)][0]
     funcname = instephandler[str(message.from_user.id)][1]
     exec("p = multiprocessing.Process(target=" + str(funcname) + "(message))")

@@ -13,4 +13,5 @@ enabled_plugins = [
 "exchange",
 "mp3tag",
 "id",
+"qrcode",
 ]
