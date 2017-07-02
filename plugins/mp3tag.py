@@ -1,5 +1,6 @@
 from mutagen.mp3 import MP3
-from mutagen.id3 import ID3, APIC, error
+from mutagen.id3 import ID3, APIC, error, TIT2, TALB, TPE1, TPE2, COMM, USLT, TCOM, TCON, TDRC
+from mutagen.easyid3 import EasyID3
 
 
 mp3taginfo = {}
@@ -85,7 +86,26 @@ def mp3tagsendaudio(message):
   file_info = bot.get_file(fileid)
   filename = file_info.file_path.replace("music/", "")
   file = urllib.urlretrieve('https://api.telegram.org/file/bot{0}/{1}'.format(config['token'], file_info.file_path), 'data/mp3tag/{}'.format(filename))
-  bot.send_audio(message.chat.id, open('data/mp3tag/{}'.format(filename), 'rb'), duration=message.audio.duration, performer=" " + mp3taginfo[userid]["artist"], title=mp3taginfo[userid]["title"])
+  mp3file = MP3('data/mp3tag/{}'.format(filename), ID3=EasyID3)
+  try:
+    mp3file.add_tags(ID3=EasyID3)
+  except error:
+    pass
+  mp3file['title'] = mp3taginfo[userid]['title']
+  mp3file['artist'] = " " + mp3taginfo[userid]['artist']
+  mp3file['composer'] = "Edited by @TheZigZagBot"
+  mp3file.save()
+#  audio["TALB"] = TALB(encoding=3, text=u'mutagen Album Name')
+#  audio["TPE2"] = TPE2(encoding=3, text=u'mutagen Band')
+#  audio["COMM"] = COMM(encoding=3, lang=u'eng', desc='desc', text=u'Edited by @TheZigZagBot')
+#  audio["TPE1"] = TPE1(encoding=3, text=mp3tag[userid]['artist'])
+#  audio["TCOM"] = TCOM(encoding=3, text=u'Edited by @TheZigZagBot')
+#  audio["TCON"] = TCON(encoding=3, text=u'mutagen Genre')
+#  audio["TDRC"] = TDRC(encoding=3, text=u'2010')
+#  audio["TRCK"] = TRCK(encoding=3, text=u'track_number')
+#  audio.save()
+#  bot.send_audio(message.chat.id, open('data/mp3tag/{}'.format(filename), 'rb'), duration=message.audio.duration, performer=" " + mp3taginfo[userid]["artist"], title=mp3taginfo[userid]["title"])
+  bot.send_audio(message.chat.id, open('data/mp3tag/{}'.format(filename), 'rb'), duration=message.audio.duration)
   del mp3taginfo[userid]
   os.remove("data/mp3tag/" + filename)
 
