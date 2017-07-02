@@ -25,14 +25,14 @@ def id(message):
     gp_fullname = message.chat.title.encode("utf-8")
   
   # Send message
-  text = "`Your data:` \n- *Username:* @{0}\n- *Full name:* {1}\n- *UserID:* {2}".format(fu_username, fu_fullname, fu_userid)
+  text = "`Your data:` \n- <b>Username:* @{0}\n- <b>Full name:* {1}\n- <b>UserID:* {2}".format(fu_username, fu_fullname, fu_userid)
   if rt_userid:
-    text = text + "\n\n`Replied-to-message data:` \n- *It's username:* @{0}\n- *It's fullname:* {1}\n- *Its userID:* {2}".format(rt_username, rt_fullname, rt_userid)
+    text = text + "\n\n`Replied-to-message data:` \n- <b>It's username:* @{0}\n- <b>It's fullname:* {1}\n- <b>Its userID:* {2}".format(rt_username, rt_fullname, rt_userid)
   if rf_userid:
-    text = text + "\n\n`Replied-to-forwarded-message data:` \n- *It's username:* @{0}\n- *It's fullname:* {1}\n- *Its userID:* {2}".format(rf_username, rf_fullname, rf_userid)
+    text = text + "\n\n`Replied-to-forwarded-message data:` \n- <b>It's username:* @{0}\n- <b>It's fullname:* {1}\n- <b>Its userID:* {2}".format(rf_username, rf_fullname, rf_userid)
   if gp_groupid:
-    text = text + "\n\n`Group data:` \n- *Group's title:* {1}\n- *Group's ID:* {0}".format(gp_groupid, gp_fullname)
-  bot.send_message(message.chat.id, text, parse_mode="Markdown")
+    text = text + "\n\n`Group data:` \n- <b>Group's title:* {1}\n- <b>Group's ID:</b> {0}".format(gp_groupid, gp_fullname)
+  bot.send_message(message.chat.id, text, parse_mode="HTML")
 
 class plid:
   patterns=["^[/!]id(.*)$"]
