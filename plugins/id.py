@@ -25,13 +25,13 @@ def id(message):
     gp_fullname = message.chat.title.encode("utf-8")
   
   # Send message
-  text = "`Your data:` \n- <b>Username:* @{0}\n- <b>Full name:* {1}\n- <b>UserID:* {2}".format(fu_username, fu_fullname, fu_userid)
+  text = "<code>Your data:</code> \n- <b>Username:</b> @{0}\n- <b>Full name:</b> {1}\n- <b>UserID:</b> {2}".format(fu_username, fu_fullname, fu_userid)
   if rt_userid:
-    text = text + "\n\n`Replied-to-message data:` \n- <b>It's username:* @{0}\n- <b>It's fullname:* {1}\n- <b>Its userID:* {2}".format(rt_username, rt_fullname, rt_userid)
+    text = text + "\n\n<code>Replied-to-message data:</code> \n- <b>It's username:</b> @{0}\n- <b>It's fullname:</b> {1}\n- <b>Its userID:</b> {2}".format(rt_username, rt_fullname, rt_userid)
   if rf_userid:
-    text = text + "\n\n`Replied-to-forwarded-message data:` \n- <b>It's username:* @{0}\n- <b>It's fullname:* {1}\n- <b>Its userID:* {2}".format(rf_username, rf_fullname, rf_userid)
+    text = text + "\n\n<code>Replied-to-forwarded-message data:</code> \n- <b>It's username:</b> @{0}\n- <b>It's fullname:</b> {1}\n- <b>Its userID:</b> {2}".format(rf_username, rf_fullname, rf_userid)
   if gp_groupid:
-    text = text + "\n\n`Group data:` \n- <b>Group's title:* {1}\n- <b>Group's ID:</b> {0}".format(gp_groupid, gp_fullname)
+    text = text + "\n\n<code>Group data:</code> \n- <b>Group's title:</b> {1}\n- <b>Group's ID:</b> {0}".format(gp_groupid, gp_fullname)
   bot.send_message(message.chat.id, text, parse_mode="HTML")
 
 class plid:
