@@ -10,23 +10,23 @@ def mp3tag(message):
   userid = message.from_user.id
   if message.text == "/mp3tag":
     m = bot.send_message(message.chat.id, "Please send the title to be set on the audiofile")
-    zigzag.nextstep(m, mp3tagsendtitle)
+    zigzag.nextstep(m, "mp3tagsendtitle")
   elif message.text == "/mp3cover":
     m = bot.send_message(message.chat.id, "Please send the cover you want to be set on your audio.")
-    zigzag.nextstep(m, mp3cvrsendcover)
+    zigzag.nextstep(m,"mp3cvrsendcover")
 
 def mp3cvrsendcover(message):
   userid = message.from_user.id
   if not message.photo:
     bot.send_message(userid, "Send a PHOTO, or say /cancel to cancel.")
-    zigzag.nextstep(m, mp3cvrsendcover)
+    zigzag.nextstep(m, "mp3cvrsendcover")
     return
-  phtoid = message.photo[0].file_id
+  phtoid = message.photo[len(message.photo)-1].file_id
   photoinf = bot.get_file(phtoid)
   photodl = urllib.urlretrieve('https://api.telegram.org/file/bot{0}/{1}'.format(config['token'], photoinf.file_path), '{0}.png'.format(phtoid))
   mp3coverinfo.update({userid: phtoid})
   m = bot.send_message(message.chat.id, "Please send the audio file now.")
-  zigzag.nextstep(m, mp3cvrsendaudio)
+  zigzag.nextstep(m, "mp3cvrsendaudio")
 
 def mp3cvrsendaudio(message):
   userid = message.from_user.id
@@ -66,20 +66,20 @@ def mp3tagsendtitle(message):
   title = message.text
   m = bot.send_message(message.chat.id, "Title set: {}. Please send the ArtistName to be set.".format(title))
   mp3taginfo.update({userid : title})
-  zigzag.nextstep(m, mp3tagsendartist)
+  zigzag.nextstep(m, "mp3tagsendartist")
 
 def mp3tagsendartist(message):
   userid = message.from_user.id
   artist = message.text
   m = bot.send_message(message.chat.id, "Artist set: {}. Please send the audio file now.".format(artist))
   mp3taginfo[userid] = {"title" : mp3taginfo[userid], "artist" : artist}
-  zigzag.nextstep(m, mp3tagsendaudio)
+  zigzag.nextstep(m, "mp3tagsendaudio")
 
 def mp3tagsendaudio(message):
   userid = message.from_user.id
   if not message.audio:
     m = bot.send_message(message.chat.id, "Please send and AUDIO file and nothing else. Try again!")
-    zigzag.nextstep(m, mp3tagsendaudio)
+    zigzag.nextstep(m, "mp3tagsendaudio")
     return
   bot.send_chat_action(message.chat.id, "upload_document")
   fileid = message.audio.file_id
