@@ -14,4 +14,6 @@ enabled_plugins = [
 "mp3tag",
 "id",
 "qrcode",
+"shortner",
+"lmgtfy",
 ]
