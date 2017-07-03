@@ -16,4 +16,6 @@ enabled_plugins = [
 "qrcode",
 "shortner",
 "lmgtfy",
+"weather",
+"ttime",
 ]
