@@ -159,7 +159,7 @@ def nextstephandler(message):
     exec("p = multiprocessing.Process(target=" + str(funcname) + "(message))")
     p.start()
     # In this line, it conflicts with the next nextstep (if registered) thats why a doublecheck is needed
-    if pluginname == instephandler[str(message.from_user.id)][1]:
+    if funcname == instephandler[str(message.from_user.id)][1]:
       del instephandler[str(message.from_user.id)]
   except Exception as e:
     zigzag.error("Error registering next step: " + str(e))
