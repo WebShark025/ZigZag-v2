@@ -5,13 +5,16 @@ def time(message):
     m = bot.send_message(message.chat.id, "Please send the city you want to get it's time in your next message.")
     zigzag.nextstep(m, "timecity")
     return
-  
+  city = city = message.text.split()[1]
+  gettm = gettime(city)
   bot.send_chat_action(message.chat.id, "typing")
-  time = json.load(urllib.urlopen("https://script.google.com/macros/s/AKfycbyd5AcbAnWi2Yn0xhFRbyzS4qMq1VucMVgVvhul5XqS9HkAyJY/exec?tz={}".format(timezone)))
-  bot.send_message(message.chat.id, "Current time in *" + timezone + "*: \n" + time["fulldate"], parse_mode="Markdown")
+  if gettm == True:
+    bot.send_message(message.chat.id, "Current time in *" + gettm["time"][0] + "*: \n" + gettm["time"][1], parse_mode="Markdown")
 
 def timecity(message):
-  
+  city = message.text.replace("/time ", "")
+  gettm = gettime(city)
+  bot.send_chat_action(message.chat.id, "typing")
 
 def gettime(city):
   try:
@@ -22,9 +25,11 @@ def gettime(city):
       lng = str(latlng["lng"])
       tzl = json.load(urllib.urlopen("https://maps.googleapis.com/maps/api/timezone/json?location={}&timestamp=1331161200".format(lat + "," + lng)))
       timezone = tzl["timeZoneId"]
+      time = json.load(urllib.urlopen("https://script.google.com/macros/s/AKfycbyd5AcbAnWi2Yn0xhFRbyzS4qMq1VucMVgVvhul5XqS9HkAyJY/exec?tz={}".format(timezone)))
+      return {"time" : [timezone, time["fulldate"]]}
     else:
       bot.reply_to(message, "Timezone not found.")
-      return
+      return False
   except:
     print("[Time] Exception occured")
-    return
+    return False
