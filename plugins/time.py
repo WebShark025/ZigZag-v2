@@ -13,8 +13,8 @@ def time(message):
 
 def timecity(message):
   city = message.text.replace("/time ", "")
-  gettm = gettime(city)
   bot.send_chat_action(message.chat.id, "typing")
+  gettm = gettime(city)
 
 def gettime(city):
   try:
