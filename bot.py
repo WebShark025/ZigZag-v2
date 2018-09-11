@@ -1,7 +1,16 @@
-####################################
-# The ZigZag Project v2 !          #
+# -*- coding: utf-8 -*-
+
+# ##################################
+#          ZigZag  v2 !!           #
+# Based on The ZigZag Project v2 ! #
 # Author: WebShark25               #
 # (Mohammad Arshia Seyyed Shakeri) #
+####################################
+#   Author's Website:              #
+#            www.webshark25.ir     #
+#                                  #
+#    iTeam's Website:              #
+#             www.iteam-co.ir      #
 ####################################
 #                                  #
 # Copyright @2017 iTeam Product    #
@@ -18,10 +27,12 @@ import telebot
 import re
 import json
 import sys
+import thread
 import redis
 import time as tm
 import requests
 import inspect
+import traceback
 from shutil import copyfile
 from telebot import types
 
@@ -47,7 +58,7 @@ class Zig:
         self.string = string
         stack = inspect.stack()
         pluginname = stack[1][0].f_code.co_name
-        print(textcolor.FAIL + "[" + pluginname + "] " + self.string + textcolor.RESET)
+        print(textcolor.FAIL + "[" + pluginname + "] " + str(self.string) + textcolor.RESET)
         return True
     def info(self, string):
         self.string = string
@@ -61,7 +72,7 @@ class Zig:
           self.function = function
           stack = inspect.stack()
           pluginname = stack[1][0].f_code.co_name
-          uid = eval(str(message))['chat']['id']
+          uid = message.chat.id
           instephandler[str(uid)] = [pluginname, function]
           bot.register_next_step_handler(message, nextstephandler)
           return True
@@ -71,7 +82,7 @@ class Zig:
     def ban(self, userid):
         self.userid = userid
         redisserver.sadd('zigzag:banlist', int(self.userid))
-        bot.send_message(int(self.userid), "You are banned from the bot!", parse_mode="Markdown")
+        bot.send_message(int(self.userid), "شما از ربات بن شدید!", parse_mode="Markdown")
         zigzag.info("User {} got banned from the bot!".format(userid))
         return True
     def unban(self, userid):
@@ -81,7 +92,7 @@ class Zig:
         except:
           pass
         zigzag.info("User {} got unbanned from the bot!".format(userid))
-        bot.send_message(int(self.userid), "You are unbanned from the bot!", parse_mode="Markdown")
+        bot.send_message(int(self.userid), "شما از ربات آنبن شدید!", parse_mode="Markdown")
         return True
     def getuser(self, userid):
         self.userid = userid
@@ -102,7 +113,7 @@ print("iTeam Proudly Presents!")
 print("Copyright 2017 @WebShark25")
 print("#########################################")
 print("#########################################")
-tm.sleep(2)
+tm.sleep(1)
 print("\n\n\n\n\n\n")
 
 # Enabled plugins list.
@@ -153,21 +164,44 @@ print(textcolor.OKGREEN + "Bot launched successfully. Launch time: " + str(time)
 
 # Define Next Step Handler function
 def nextstephandler(message):
+  if message.text == "/cancel":
+    try:
+      del instephandler[str(message.from_user.id)]
+    except:
+      pass
+    return
+  userid = message.from_user.id
+  banlist = redisserver.sismember('zigzag:banlist', userid)
+  if banlist:
+    return
   try:
     pluginname = instephandler[str(message.from_user.id)][0]
     funcname = instephandler[str(message.from_user.id)][1]
+    if funcname == instephandler[str(message.from_user.id)][1]:
+      del instephandler[str(message.from_user.id)]
     exec("p = multiprocessing.Process(target=" + str(funcname) + "(message))")
     p.start()
     # In this line, it conflicts with the next nextstep (if registered) thats why a doublecheck is needed
-    if funcname == instephandler[str(message.from_user.id)][1]:
-      del instephandler[str(message.from_user.id)]
   except Exception as e:
-    zigzag.error("Error registering next step: " + str(e))
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    zigzag.error("Error registering next step: " + str(e) + "\nInfo :" + ''.join(traceback.format_tb(exc_tb)))
+
 
 # Define message handler function.
 def message_replier(messages):
   for message in messages:
     userid = message.from_user.id
+    _hash = "anti_floodmsg:user:" + str(message.from_user.id)
+    max_time = 10
+    msgs = 0
+    if redisserver.get(_hash):
+      msgs = int(redisserver.get(_hash))
+      max_msgs = 3  # msgs in
+      max_time = 10  # seconds
+      if msgs > max_msgs:
+        zigzag.info("Request dropped due to antispam prevention. Userid: {}".format(message.chat.id))
+        return
+    redisserver.setex(_hash, max_time, int(msgs) + 1)
     banlist = redisserver.sismember('zigzag:banlist', userid)
     if banlist:
       return
@@ -193,10 +227,25 @@ def message_replier(messages):
             rlnumber = re.compile(rgx)
             args = message.text
             if rlnumber.search(args):
+              exec("thread.start_new_thread( " + str(plugin) + ", (message, ) )")
+#              exec("p = multiprocessing.Process(target=" + str(plugin) + "(message))")
+#              p.start()
+        except Exception as e:
+          exc_type, exc_obj, exc_tb = sys.exc_info()
+          zigzag.error("Error: " + str(e) + "\nInfo :" + ''.join(traceback.format_tb(exc_tb)))
+    else :
+      for plugin in pllist:
+        try :
+          exec("content_types = pl" + plugin + ".content_types")
+          try:
+            if message.content_type in content_types :
               exec("p = multiprocessing.Process(target=" + str(plugin) + "(message))")
               p.start()
-        except Exception as e:
-          zigzag.error("Error: " + str(e))
+          except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            zigzag.error("Error: " + str(e) + "\nInfo :" + ''.join(traceback.format_tb(exc_tb)))
+        except :
+          pass
 
 # Set message handler!
 bot.set_update_listener(message_replier)
@@ -205,6 +254,16 @@ bot.set_update_listener(message_replier)
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
   if call.message:
+    _hash = "anti_flood:user:" + str(call.from_user.id)
+    max_time = 10
+    msgs = 0
+    if redisserver.get(_hash):
+      msgs = int(redisserver.get(_hash))
+      max_msgs = 5  # msgs in
+      max_time = 10  # seconds
+      if msgs > max_msgs:
+        return
+    redisserver.setex(_hash, max_time, int(msgs) + 1)
     for plugin in pllist:
       try:
         exec("pln = pl" + plugin + ".callbacks")
@@ -217,8 +276,10 @@ def callback_inline(call):
           if rlnumber.search(args):
             exec("p = multiprocessing.Process(target=call" + str(plugin) + "(call))")
             p.start()
+            break
       except Exception as e:
-        zigzag.error("Error: " + str(e))
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        zigzag.error("Error: " + str(e) + "\nInfo :" + ''.join(traceback.format_tb(exc_tb)))
 
 # Define inline function
 @bot.inline_handler(func=lambda query: True)
@@ -235,8 +296,10 @@ def inline_hand(inlinequery):
         if rlnumber.search(args):
           exec("p = multiprocessing.Process(target=inline" + str(plugin) + "(inlinequery))")
           p.start()
+          break
     except Exception as e:
-      zigzag.error("Error: " + str(e))
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      zigzag.error("Error: " + str(e) + "\nInfo :" + ''.join(traceback.format_tb(exc_tb)))
     if len(inlinequery.query) is 0:
       for rgx in pln:
         if rgx == "DEFAULTQUERY":
